@@ -35,6 +35,9 @@ jobs:
       run: |
         cd packages/client
         npm run build
+    - name: Install vsce
+      run: npm install -g @vscode/vsce
+
     - name: Build vscodePlugin
       run: |
         cd packages/vscodePlugin
