@@ -36,7 +36,9 @@ jobs:
         cd packages/client
         npm run build
     - name: Install vsce
-      run: npm install -g @vscode/vsce
+      run: yarn global add vsce
+      env:
+        NODE_VERSION: ${{ env.NODE_VERSION }}
 
     - name: Build vscodePlugin
       run: |
