@@ -1,0 +1,50 @@
+name: Build and Upload Cherry Markdown
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Read .nvmrc
+      run: echo "NODE_VERSION=$(cat .nvmrc)" >> $GITHUB_ENV
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        cache: yarn
+
+    - name: Install dependencies
+      run: yarn install --frozen-lockfile
+
+    - name: Build all packages
+      run: yarn workspaces foreach -A run build
+      continue-on-error: true
+
+    - name: Collect artifacts
+      run: |
+        mkdir -p artifacts
+        cp -r packages/cherry-markdown/dist artifacts/cherry-markdown || true
+        cp -r packages/client/dist artifacts/client || true
+        cp -r packages/vscodePlugin/dist artifacts/vscodePlugin || true
+
+    - name: Zip artifacts
+      run: |
+        cd artifacts
+        zip -r ../cherry-markdown-artifacts.zip .
+
+    - name: Upload artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: cherry-markdown-artifacts
+        path: cherry-markdown-artifacts.zip
+        retention-days: 7
