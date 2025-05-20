@@ -27,9 +27,18 @@ jobs:
     - name: Install dependencies
       run: yarn install --frozen-lockfile
 
-    - name: Build all packages
-      run: yarn workspaces foreach -A run build
-      continue-on-error: true
+    - name: Build cherry-markdown
+      run: |
+        cd packages/cherry-markdown
+        npm run build
+    - name: Build client
+      run: |
+        cd packages/client
+        npm run build
+    - name: Build vscodePlugin
+      run: |
+        cd packages/vscodePlugin
+        npm run build
 
     - name: Collect artifacts
       run: |
