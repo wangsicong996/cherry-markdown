@@ -74,8 +74,13 @@ jobs:
     - name: Collect artifacts
       run: |
         mkdir -p artifacts
+        # 收集核心库的构建产物
         cp -r packages/cherry-markdown/dist artifacts/cherry-markdown || true
-        cp -r packages/client/dist artifacts/client || true
+        
+        # 收集 Tauri 客户端的构建产物
+        cp -r packages/client/src-tauri/target/release/bundle/* artifacts/client || true
+        
+        # 收集 VSCode 插件的构建产物
         cp -r packages/vscodePlugin/dist artifacts/vscodePlugin || true
 
     - name: Zip artifacts
